@@ -26,23 +26,31 @@ Resolves to an ARRAY with all users.
   }
 ]
    */
-
 return db( 'users as u' )
-  .join(
-    'roles as r',
-    'u.role_id',
-    'r.role_name'
-    )
-  .select(
-    'u.user_id',
-    'u.username',
-    'r.role_name'
-    )
+.join(
+'roles as r',
+'u.role_id',
+'r.role_name'
+)
+.select(
+'u.user_id',
+'u.username',
+'r.role_name'
+)
    
 }
 
 function findBy(filter) {
   /**
+   * select 
+     u.user_id,
+     u.username,
+     u.password,
+     r.role_name
+     from users as u
+     join roles as r 
+     on u.role_id = r.role_id;
+
     You will need to join two tables.
     Resolves to an ARRAY with all users that match the filter condition.
 
@@ -55,6 +63,21 @@ function findBy(filter) {
       }
     ]
    */
+    
+return db( 'users as u' )
+.join(
+  'roles as r',
+  'u.role_id',
+  'r.role_name'
+)
+.select(
+  'u.user_id',
+  'u.username',
+  'u.password',
+  'r.role_name'
+)
+.where(filter)
+
 }
 
 function findById(user_id) {

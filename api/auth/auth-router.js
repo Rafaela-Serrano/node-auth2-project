@@ -25,14 +25,14 @@ router.post("/register", validateRoleName, (req, res, next) => {
     }
    */
   let {username,password}= req.body
-  const {role_name} = req.body
+  const role_name = req.body.role_name.trim()
 
   const hash = bcrypt.hashSync(password,8)
   password = hash 
 
   model.add({username,password,role_name})
   .then( added => {
-    res.json(added)
+  res.status(201).json(added)
   })
   .catch(next)
 });
@@ -60,8 +60,8 @@ router.post('/login', checkUsernameExists, (req, res, next) => {
    */
   let {username, password} = req.body
 
-  model.findBy(username)
-  .then( user => {
+  model.findBy({username})
+  .then( ([user]) => {
     if(user && bcrypt.compareSync(password,user.password)){
       const token = generateToken(user)
 
@@ -80,13 +80,15 @@ router.post('/login', checkUsernameExists, (req, res, next) => {
 
 function generateToken(user) {
   const payload = {
-    subject: user.id,
+    subject: parseInt(user.user_id),
+    role_name: user.role_name,
     username: user.username,
-    role: user.role,
+
   }
   const options = {
-    expiresIn: '1d',
+    expiresIn:'1d',
   }
+  
   return jwt.sign(payload, JWT_SECRET, options)
 }
 

@@ -53,7 +53,11 @@ const only = role_name => (req, res, next) => {
 
     Pull the decoded token from the req object, to avoid verifying it again!
   */
-if( req.jwtDecoded.role && req.jwtDecoded.role === role_name ){
+ console.log(req.jwtDecoded)
+if( req.jwtDecoded.role_name && 
+    req.jwtDecoded.role_name === 
+    role_name
+    ){
   next()
 }else{
   next({
@@ -105,20 +109,21 @@ const validateRoleName = (req, res, next) => {
     }
   */
 
- if(!req.body.role_name || req.body.role_name.trim() === undefined){
+ if(!req.body.role_name || !req.body.role_name.trim() ){
    req.body.role_name = "student"
    next()
- } else if (req.body.role_name === "admin"){
+ } else if (req.body.role_name.trim() === "admin"){
   next({
     status:422,
-    message:"Role name cannot be admin"
+    message:"Role name can not be admin"
   })
  }else if (req.body.role_name.trim().length > 32){
   next({
     status:422,
-    message:"Role name cannot be longer than 32 chars"
+    message:"Role name can not be longer than 32 chars"
   })
  }else{
+  req.body.role_name.trim()
   next()
  }
 }
